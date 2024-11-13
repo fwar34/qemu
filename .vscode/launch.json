@@ -1,0 +1,95 @@
+// 预定义全局变量
+// ${workspaceFolder}:表示当前workspace文件夹路径
+// ${workspaceRoot}:同上表示当前workspace文件夹路径
+// ${cwd}:切换workspace文件夹路径
+// ${workspaceRootFolderName}:表示workspace的文件夹名
+// ${workspaceFolderBasename}:同上表示workspace的文件夹名
+// ${lineNumber}:当前活动文件的光标行号
+// ${selectedText}:当前活动文件的选中文本
+// ${file}:当前活动文件的绝对路径
+// ${fileWorkspaceFolder}:当前活动文件工作空间绝对路径
+// ${relativeFile}:当前活动文件的相对workpace的相对路径
+// ${relativeFileDirname}:当前活动文件的目录相对workpace的相对路径
+// ${fileDirname}:当前活动文件的目录绝对路径
+// ${fileExtname}:当前活动文件的后缀名
+// ${fileBasename}:当前活动文件的文件名
+// ${fileBasenameNoExtension}:当前活动文件的文件名，不带后缀
+// ${fileDirnameBasename}:当前活动文件目录名
+// ${execPath}:vscode的执行文件路径
+// ${execInstallFolder}:当前工作空间的目录
+// ${pathSeparator}:系统文件分割符
+// ${env:PATH}:系统中的环境变量
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+            "name": "qemu-debug",
+            "type": "cppdbg",
+            "request": "launch", 
+            "program": "${workspaceFolder}/arm-softmmu/qemu-system-arm",
+            "args": [
+               "-M", "mcimx6ul-evk",
+               "-m", "512M",
+               "-kernel", "/home/feng/linux/100ask/ubuntu-18.04_imx6ul_qemu_system/imx6ull-system-image/zImage",
+               "-dtb", "/home/feng/linux/100ask/ubuntu-18.04_imx6ul_qemu_system/imx6ull-system-image/100ask_imx6ull_qemu.dtb",
+               "-serial", "mon:stdio",
+               "-show-cursor",
+            //    "-display", "sdl",
+               "-drive", "file=/home/feng/linux/100ask/ubuntu-18.04_imx6ul_qemu_system/imx6ull-system-image/rootfs.img,format=raw,id=mysdcard",
+               "-device", "sd-card,drive=mysdcard",
+               "-append", "console=ttymxc0,115200 console=tty1 rootfstype=ext4 root=/dev/mmcblk1 rw rootwait init=/sbin/init loglevel=8",
+               "-nic", "user",
+            //    "-s", "-S"
+            ],//启动参数,如果需要记录日志可以自己增加参数。因为gdbsever已经有了参数，这里可以不用设置
+            "stopAtEntry": false,//会自动停在main,不需要则设置为false
+            "cwd": "${workspaceFolder}",
+            // "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false, // 重要！！！，Windows 的 vscode 远程调试这里不能设置成 true，否则 gdb会超时，Ubuntu 中的 vscode 可以设置成 true
+            "MIMode": "gdb", //运行模式
+            "logging": {
+                "moduleLoad": false,
+                "engineLogging": false,
+                "trace": false
+            },
+            "setupCommands": [ //命令
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                // {
+                //     "description": "set architecture aarch64",
+                //     "text": "set architecture aarch64",
+                //     "ignoreFailures": true
+                // }
+            ],
+            // "miDebuggerPath":"/usr/bin/gdb",//工具链gdb
+            // "miDebuggerServerAddress":"192.168.125.112:1234"//远程端口
+        },
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/arm-softmmu/qemu-system-arm",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+  ]
+}
